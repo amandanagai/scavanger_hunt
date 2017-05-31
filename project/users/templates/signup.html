@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Hi there! We're excited to have you</h1>
+  <form action="{{url_for('users.signup')}}" method="POST">
+    {{form.csrf_token}}
+    <p>
+      {{form.username.label}}
+      {{form.username}}
+      <span>
+        {% if form.username.errors %}
+          {% for error in errors %}
+            {{error}}
+          {% endfor %}
+        {% endif %}
+      </span>
+      <br>
+      <br>
+      {{form.email.label}}
+      {{form.email}}
+      <span>
+        {% if form.email.errors %}
+          {% for error in errors %}
+            {{error}}
+          {% endfor %}
+        {% endif %}
+      </span>
+      <br>
+      <br>
+      <!-- change to radial buttons -->
+      If you're creating a hunt for someone special, type "creator" in box below:
+      <br>
+      {{form.role}}
+      <span>
+        {% if form.role.errors %}
+          {% for error in errors %}
+            {{error}}
+          {% endfor %}
+        {% endif %}
+      </span>
+      <br>
+      <br>
+      {{form.password.label}}
+      {{form.password}}
+      <span>
+        {% if form.password.errors %}
+          {% for error in errors %}
+            {{error}}
+          {% endfor %}
+        {% endif %}
+      </span>
+    </p>
+    <input class="btn btn-primary" type="submit" value="Signup">
+  </form>
+{% endblock %}

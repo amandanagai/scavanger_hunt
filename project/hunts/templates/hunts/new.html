@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+ <form action="{{url_for('hunts.index', user_id=user_id)}}" method="POST">
+   {{form.hunt_name.label}}
+   {{form.hunt_name}}
+   <input type="submit" value="Add">
+ </form>
+{% endblock %}
