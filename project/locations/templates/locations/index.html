@@ -1,4 +1,106 @@
 {% extends 'base.html' %}
 {% block content %}
-  Good to go!
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    #map {
+      height: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <form action="{{url_for('locations.geocode', user_id=current_user.id, id=id)}}">
+    <input type="hidden" id="user_id" value="{{current_user.id}}">
+    <input type="hidden" id="hunt_id" value="{{id}}">
+    <input class="place" type="text" placeholder="type a place">
+    <input class="submitSearch" type="submit" value="search">
+  </form>
+
+  <div id="map"></div>
+  
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?v=3.27&key=AIzaSyD3GR4qurOOFeNGD2U3ar8YhD8hQ3hIR8U&signed_in=true">
+  </script>
+
+  <script>
+      var $submitSearch = $('.submitSearch');
+
+      $submitSearch.on("click", function(e){
+        e.preventDefault();
+        var $place = $('.place').val();
+        var $userId = $('#user_id').val();
+        var $huntId = $('#hunt_id').val();
+      
+      $.ajax({
+          method: 'post',
+          url: `/users/${$userId}/hunts/${$huntId}/locations/geocode`,    
+          data: {
+              place: $place
+          }
+        })
+      .then(function(res){
+        // var $mapBody = $('#mapBody');
+        // var str = "<script async defer src='https://maps.googleapis.com/maps/api/js?v=3.27&key=AIzaSyD3GR4qurOOFeNGD2U3ar8YhD8hQ3hIR8U&signed_in=true&callback=initMap'><\/script>"
+        // $mapBody.prepend(str);
+
+        var newPlace = {lat: res[0], lng: res[1]};
+        var search = res[2]
+        initMap();
+
+        function initMap() {
+          var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 17,
+            center: newPlace
+          });
+          createMarker(newPlace, map);
+        }
+
+        function createMarker(newPlace, map) {
+          var marker = new google.maps.Marker({
+            map: map,
+            // Define the place with a location, and a query string.
+            position: newPlace,
+            // Attributions help users find your site again.
+            attribution: {
+              source: 'Google Maps JavaScript API',
+              webUrl: 'https://developers.google.com/maps/'
+            }
+          });
+
+          // Construct a new InfoWindow.
+          var infoWindow = new google.maps.InfoWindow({
+            content: `${search}: double click marker to add location to hunt`
+          });
+
+          // Opens the InfoWindow when marker is clicked.
+          marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+          });
+            
+          marker.addListener('dblclick', function(e){
+              // e.preventDefault();
+              $.ajax({
+                method: 'post',
+                url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+                data: {
+                  lat: newPlace['lat'],
+                  lng: newPlace['lng'],
+                  place: search
+                }
+              })
+              .then(function(res){ 
+                console.log(res);
+              })
+          });
+
+        }
+          });
+    })
+  </script>
+
 {% endblock %}

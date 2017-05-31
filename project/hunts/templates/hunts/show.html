@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>{{hunt.hunt_name}}</h1>
-    {% if hunt.locations.count() > 0 %}
+    {% if hunt.locations.count("*") > 0 %}
       {% for location in locations %}
         <h4>{{location}}</h4>
-        <a href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">index</a>
+        <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Add a location</a>
       {% endfor %}
     {% else %}
       <h4>You haven't added any locations yet</h4>
-      <a href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">index</a>
+      <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Add a location</a>
     {% endif %}
 {% endblock %}
