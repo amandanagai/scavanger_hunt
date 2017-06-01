@@ -31,13 +31,16 @@ def index(user_id, id):
         hl = HuntLocation(id, new_place.id, highest+1)
         db.session.add(hl)
         db.session.commit()
-        return redirect(url_for('locations.index', user_id=current_user.id, id=id))
+        list_to_pass = [lat, lng, place, hl.location_order]
+        return jsonify(list_to_pass)
     return render_template('locations/index.html', user_id=user_id, id=id, coord=coordArr)
+
+# @locations_blueprint.route('/<int:id>/show', methods=['DELETE'])
+# def show(user_id, id, ):
 
 @locations_blueprint.route('/geocode', methods=['POST'])
 def geocode(user_id, id):
-    coord_lst = geocoder.google(request.form['place']).latlng
+    coord_list = geocoder.google(request.form['place']).latlng
     place = request.form['place']
-    coord_lst.append(place)
-    # from IPython import embed; embed()
-    return jsonify(coord_lst)
+    coord_list.append(place)
+    return jsonify(coord_list)

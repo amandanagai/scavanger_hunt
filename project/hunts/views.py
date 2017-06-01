@@ -58,6 +58,7 @@ def show(user_id, id):
         db.session.delete(hunt)
         db.session.commit()
         return redirect(url_for('hunts.index', user_id=user_id))
+    # from IPython import embed; embed()
     return render_template('hunts/show.html', user_id=user_id, id=id, hunt=hunt)
 
 

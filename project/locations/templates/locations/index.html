@@ -20,6 +20,7 @@
     <input class="place" type="text" placeholder="type a place">
     <input class="submitSearch" type="submit" value="search">
   </form>
+  <a class="btn btn-primary btn-xs" href="{{url_for('hunts.show', user_id=current_user.id, id=id)}}">Back to list</a>
 
   <div id="map"></div>
   
@@ -29,6 +30,7 @@
 
   <script>
       var $submitSearch = $('.submitSearch');
+      var markers = [];
 
       $submitSearch.on("click", function(e){
         e.preventDefault();
@@ -44,33 +46,52 @@
           }
         })
       .then(function(res){
-        // var $mapBody = $('#mapBody');
-        // var str = "<script async defer src='https://maps.googleapis.com/maps/api/js?v=3.27&key=AIzaSyD3GR4qurOOFeNGD2U3ar8YhD8hQ3hIR8U&signed_in=true&callback=initMap'><\/script>"
-        // $mapBody.prepend(str);
-
         var newPlace = {lat: res[0], lng: res[1]};
-        var search = res[2]
+        var search = res[2];
+        var map;
         initMap();
+        // addMarker(newPlace);
+        // setMapOnAll(map);
+        // showMarkers();
 
         function initMap() {
-          var map = new google.maps.Map(document.getElementById('map'), {
+          map = new google.maps.Map(document.getElementById('map'), {
             zoom: 17,
             center: newPlace
           });
           createMarker(newPlace, map);
         }
 
+        // function setMapOnAll(map) {
+        //   for (var i = 0; i < markers.length; i++) {
+        //     markers[i].setMap(map);
+        //   }
+        // }
+
+        // function showMarkers() {
+        //   setMapOnAll(map);
+        // }
+
+
+        // function addMarker(location) {
+        //   var marker = new google.maps.Marker({
+        //     position: location,
+        //     map: map
+        //   });
+        //   markers.push(marker);
+        // }
+
         function createMarker(newPlace, map) {
           var marker = new google.maps.Marker({
             map: map,
-            // Define the place with a location, and a query string.
             position: newPlace,
-            // Attributions help users find your site again.
-            attribution: {
-              source: 'Google Maps JavaScript API',
-              webUrl: 'https://developers.google.com/maps/'
-            }
+            // // Attributions help users find your site again.
+            // attribution: {
+            //   source: 'Google Maps JavaScript API',
+            //   webUrl: 'https://developers.google.com/maps/'
+            // }
           });
+        //   markers.push(marker)
 
           // Construct a new InfoWindow.
           var infoWindow = new google.maps.InfoWindow({
@@ -94,13 +115,20 @@
                 }
               })
               .then(function(res){ 
-                console.log(res);
+                  function deleteSearchMarker() {
+                    markers.pop()
+                  }
+                  var added = new google.maps.Marker({
+                    map: map,
+                    position: newPlace,
+                    label: `#${res[3]}`
+                  });
+                  markers.push(added);
               })
           });
-
         }
-          });
-    })
+        });
+        })
   </script>
 
 {% endblock %}

@@ -41,7 +41,6 @@ def load_user(user_id):
     return User.query.get(user_id) 
 
 
-
 @app.route('/')
 def root():
     return redirect(url_for('users.login'))
