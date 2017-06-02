@@ -10,6 +10,7 @@ This is a scavanger hunt generating app that allows you to digitally build scava
 It's a work in progress - the eventual goal is to help people run scavenger hunts on the app as well.
 Send a pull request if you have ideas or want to help build.
 
+
 Languages:
 
 Javascript
@@ -20,6 +21,7 @@ SQL
 Postgres
 HTML
 a little CSS (needs more!)
+
 
 With the following APIs + modules:
 
@@ -34,6 +36,7 @@ flask-migrate
 Geocoder
 Twitter Bootstrap
 bcrypt
+
 
 To get it up and running locally:
 
