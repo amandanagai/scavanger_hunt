@@ -56,7 +56,7 @@
 
       function initMap(lat, lng) {
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 15,
+          zoom: 13,
           center: {lat: lat, lng: lng}
         });
       }
@@ -105,6 +105,16 @@
               }
             })
           });
+          var infoWindow;
+          markers[j].addListener('mouseover', function(e){
+            infoWindow = new google.maps.InfoWindow({
+              content: `double click to delete`
+            });
+            infoWindow.open(map, this);
+          });
+          markers[j].addListener('mouseout', function(e){
+            infoWindow.setMap(null);
+          });
         }
 
       })
@@ -150,43 +160,46 @@
             //   infoWindow.open(map, marker);
             // });
               
-          //   marker.addListener('click', function(e){
-          //       $.ajax({
-          //         method: 'post',
-          //         url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-          //         data: {
-          //           lat: newPlace['lat'],
-          //           lng: newPlace['lng'],
-          //           place: search
-          //         }
-          //       })
-          //       .then(function(res){ 
-          //           var added = new google.maps.Marker({
-          //             map: map,
-          //             position: newPlace,
-          //             label: `#${res[3]}`
-          //           });
-          //       })
-          //   });
-          //   infoWindow.addListener('click', function(e){
-          //       $.ajax({
-          //         method: 'post',
-          //         url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-          //         data: {
-          //           lat: newPlace['lat'],
-          //           lng: newPlace['lng'],
-          //           place: search
-          //         }
-          //       })
-          //       .then(function(res){ 
-          //           var added = new google.maps.Marker({
-          //             map: map,
-          //             position: newPlace,
-          //             label: `#${res[3]}`
-          //           });
-          //       })
-          //   });        
+            // marker.addListener('click', function(e){
+            //     $.ajax({
+            //       method: 'post',
+            //       url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+            //       data: {
+            //         lat: newPlace['lat'],
+            //         lng: newPlace['lng'],
+            //         place: search
+            //       }
+            //     })
+            //     .then(function(res){ 
+            //         var added = new google.maps.Marker({
+            //           map: map,
+            //           position: newPlace,
+            //           label: `#${res[3]}`
+            //         });
+            //     })
+            // });
+            // infoWindow.addListener('click', function(e){
+            //     $.ajax({
+            //       method: 'post',
+            //       url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+            //       data: {
+            //         lat: newPlace['lat'],
+            //         lng: newPlace['lng'],
+            //         place: search
+            //       }
+            //     })
+            //     .then(function(res){ 
+            //         var added = new google.maps.Marker({
+            //           map: map,
+            //           position: newPlace,
+            //           label: `#${res[3]}`
+            //         });
+            //     })
+            // });        
           }
+
+
+
 
         $submitAdd.on("click", function(e){
           e.preventDefault();
@@ -209,7 +222,7 @@
             debugger;
             var added = new google.maps.Marker({
               map: map,
-              position: {lat: res[0], lng: res[1]},
+              position: {lat: +res[0], lng: +res[1]},
               label: `#${res[3]}`
             });
           })
