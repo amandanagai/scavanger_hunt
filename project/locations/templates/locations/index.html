@@ -12,30 +12,39 @@
       margin: 0;
       padding: 0;
     }
+
+    #hintsForm {
+      display: inline-block;
+    }
+
   </style>
-  
-  <h1>Work on your Hunt <a class="btn btn-primary btn-xs" href="{{url_for('hunts.show', user_id=current_user.id, id=id)}}">Back to Hunt Overview</a></h1>
+
+  <div >
+  <h1>Work on your Hunt
+    <a class="btn btn-warning btn-sm" href="{{url_for('hunts.show', user_id=current_user.id, id=id)}}">Back to Hunt Overview</a>
+  </h1>
+  </div>
   <br>
   
-  <form id="search_form" action="{{url_for('locations.geocode', user_id=current_user.id, id=id)}}">
+  <form id="searchForm" action="{{url_for('locations.geocode', user_id=current_user.id, id=id)}}">
     <input type="hidden" id="user_id" value="{{current_user.id}}">
     <input type="hidden" id="hunt_id" value="{{id}}">
-    <labe>Add locations by searching<input class="place" type="text"></labe>
-    <input class="submitSearch" type="submit" value="search">
+    <label>Search to Add a Location<input class="place" type="text"></label>
+    <input type="submit" class="btn btn-danger btn-sm" value="search">
   </form>
 
-
-  <form id="hints_form" style="display: none;">
+  <form id="hintsForm" style="display: none;">
     <input type="hidden" id="user_id" value="{{current_user.id}}">
     <input type="hidden" id="hunt_id" value="{{id}}">
     <input type="hidden" id="lat">
     <input type="hidden" id="lng">
     <input type="hidden" id="search">
-    <label>Write a hint to add location<input class="hint" type="text"></label>
-    <input class="submitAdd" type="submit" value="add to hunt">
-    <input class="backBtn" type="submit" value="back to search">
+    <label>Write Hint to Add Location<input class="hint" type="text"></label>
+    <input class="btn btn-primary btn-sm" type="submit" value="add to hunt">
   </form>
-  
+  <button id="newSearch" type="button" class="btn btn-success btn-sm" style="display: none;">new search</button>
+  <br>
+
 
   <div id="map"></div>
   
@@ -46,8 +55,9 @@
   <!-- <script src="../../../static/script.js"></script> -->
   <script>
   $(function(){
-      var $submitSearch = $('.submitSearch');
-      var $submitAdd = $('.submitAdd');
+      var $searchForm = $('#searchForm');
+      var $hintsForm = $('#hintsForm');
+      var $newSearch = $('#newSearch');
       var $userId = $('#user_id').val();
       var $huntId = $('#hunt_id').val();
       var markers = [];
@@ -60,7 +70,7 @@
           center: {lat: lat, lng: lng}
         });
       }
-
+// Set up map
       $.ajax({
         method: 'get',
         url: `/users/${$userId}/hunts/${$huntId}/locations/`,   
@@ -75,7 +85,6 @@
         if (res) {
           setMapOnAll(map, res);
         }
-
         function setMapOnAll(map, res) {
           for (let i = 0; i < res.length; i++) {
             var newMarkerCoords = {lat: res[i][0], lng: res[i][1]};
@@ -116,12 +125,15 @@
             infoWindow.setMap(null);
           });
         }
-
       })
-
-      $submitSearch.on("click", function(e){
+// Upon searching for place
+      var searchedInfoWindow;
+      var searchedMarker;
+      // var added;
+      $searchForm.on("submit", function(e){
         e.preventDefault();
         var $place = $('.place').val();
+        $('.hint').val('');
       
         $.ajax({
             method: 'post',
@@ -129,84 +141,45 @@
             data: {
                 place: $place
             },
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"        
-            }
           })
         .then(function(res){
           var newPlace = {lat: res[0], lng: res[1]};
           var search = res[2];
           createMarker(newPlace, map);
-          $('#hints_form').css({ "display": 'block'});
-          $('#search_form').css({ "display": 'none'});
+          $hintsForm.css({ "display": 'block'});
+          $newSearch.css({ "display": 'block'});
+          $('#searchForm').css({ "display": 'none'});
           $('#lat').val(newPlace['lat']); 
           $('#lng').val(newPlace['lng']); 
           $('#search').val(search); 
 
           function createMarker(newPlace, map) {
-            var marker = new google.maps.Marker({
+            searchedMarker = new google.maps.Marker({
               map: map,
               position: newPlace,
-              // huntLocationId: 'pending'
             });
 
-            var infoWindow = new google.maps.InfoWindow({
+            searchedInfoWindow = new google.maps.InfoWindow({
               content: search
-              // content: `${search}: click to add location to hunt`
             });
 
-            infoWindow.open(map, marker);
-            // marker.addListener('mouseover', function() {
-            //   infoWindow.open(map, marker);
-            // });
-              
-            // marker.addListener('click', function(e){
-            //     $.ajax({
-            //       method: 'post',
-            //       url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-            //       data: {
-            //         lat: newPlace['lat'],
-            //         lng: newPlace['lng'],
-            //         place: search
-            //       }
-            //     })
-            //     .then(function(res){ 
-            //         var added = new google.maps.Marker({
-            //           map: map,
-            //           position: newPlace,
-            //           label: `#${res[3]}`
-            //         });
-            //     })
-            // });
-            // infoWindow.addListener('click', function(e){
-            //     $.ajax({
-            //       method: 'post',
-            //       url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-            //       data: {
-            //         lat: newPlace['lat'],
-            //         lng: newPlace['lng'],
-            //         place: search
-            //       }
-            //     })
-            //     .then(function(res){ 
-            //         var added = new google.maps.Marker({
-            //           map: map,
-            //           position: newPlace,
-            //           label: `#${res[3]}`
-            //         });
-            //     })
-            // });        
+            searchedInfoWindow.open(map, searchedMarker);       
           }
-
-
-
-
-        $submitAdd.on("click", function(e){
+        }) 
+      })
+// Upon adding hint
+        $hintsForm.on("submit", function(e){
           e.preventDefault();
           var hint = $('.hint').val();
           var lat = $('#lat').val();
           var lng = $('#lng').val();
           var search = $('#search').val();
+          $hintsForm.css({ "display": 'none'});
+          $newSearch.css({ "display": 'none'});
+          $searchForm.css({ "display": 'block'});
+          $('#search').removeAttr('value');
+          $('.place').val('');
+          searchedInfoWindow.setMap(null);
         
           $.ajax({
             method: 'post',
@@ -216,20 +189,31 @@
               lng: lng,
               place: search,
               hint: hint
+            },
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             }
           })
           .then(function(res){ 
-            debugger;
             var added = new google.maps.Marker({
               map: map,
               position: {lat: +res[0], lng: +res[1]},
               label: `#${res[3]}`
             });
           })
-
           });
+// Upon clicking on new search
+        $newSearch.on("click", function(e){
+          e.preventDefault();
+          $hintsForm.css({ "display": 'none'});
+          $newSearch.css({ "display": 'none'});
+          $searchForm.css({ "display": 'block'});
+          $('#search').removeAttr('value');
+          $('.place').val('');
+          searchedMarker.setMap(null);
+          searchedInfoWindow.setMap(null);
         })
-      })
+
 
   })
   </script>

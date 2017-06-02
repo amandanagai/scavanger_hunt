@@ -1,5 +1,6 @@
 from flask import redirect, render_template, request, url_for, Blueprint, flash
 from project.hunts.models import Hunt
+from project.locations.models import HuntLocation
 from project.users.models import User
 from project.users.views import ensure_correct_user
 from project.hunts.forms import HuntForm
@@ -48,18 +49,17 @@ def edit(user_id, id):
 # @ensure_correct_user
 def show(user_id, id):
     hunt = Hunt.query.get(id)
+    huntlocations = HuntLocation.query.filter_by(hunt_id=hunt.id)
     if request.method == b'PATCH':
         hunt.hunt_name = request.form['hunt_name']
         db.session.add(hunt)
         db.session.commit()
         return redirect(url_for('hunts.index', user_id=user_id))
     if request.method == b'DELETE':
-
         db.session.delete(hunt)
         db.session.commit()
         return redirect(url_for('hunts.index', user_id=user_id))
-    # from IPython import embed; embed()
-    return render_template('hunts/show.html', user_id=user_id, id=id, hunt=hunt)
+    return render_template('hunts/show.html', user_id=user_id, id=id, hunt=hunt, huntlocations=huntlocations)
 
 
 

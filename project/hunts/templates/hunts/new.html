@@ -1,8 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
+<h1>Make someone's day!</h1>
+<h4>Create an adventure</h4>
+<br>
+<br>
  <form action="{{url_for('hunts.index', user_id=user_id)}}" method="POST">
    {{form.hunt_name.label}}
    {{form.hunt_name}}
-   <input type="submit" value="Add">
+   <input type="submit" class="btn btn-primary btn-sm" value="Add">
  </form>
+  <a href="{{url_for('hunts.index', user_id=user_id)}}" class="btn btn-warning btn-sm">Cancel</a>
+
+
 {% endblock %}

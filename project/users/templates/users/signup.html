@@ -26,6 +26,17 @@
       </span>
       <br>
       <br>
+      {{form.password.label}}
+      {{form.password}}
+      <span>
+        {% if form.password.errors %}
+          {% for error in errors %}
+            {{error}}
+          {% endfor %}
+        {% endif %}
+      </span>
+      <br>
+      <br>
       <!-- change to radial buttons -->
       If you're creating a hunt for someone special, type "creator" in box below:
       <br>
@@ -37,18 +48,10 @@
           {% endfor %}
         {% endif %}
       </span>
-      <br>
-      <br>
-      {{form.password.label}}
-      {{form.password}}
-      <span>
-        {% if form.password.errors %}
-          {% for error in errors %}
-            {{error}}
-          {% endfor %}
-        {% endif %}
-      </span>
     </p>
-    <input type="submit" value="Signup">
+    <input type="submit" value="Sign up" class="btn btn-success btn-sm">
   </form>
+  <br>
+  <br>
+  <a class="btn btn-primary btn-sm" href="{{url_for('users.login')}}">Login</a>
 {% endblock %}

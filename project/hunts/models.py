@@ -1,12 +1,10 @@
 from project import db, bcrypt
-from flask_sqlalchemy import SQLAlchemy       # Enum, Integer, Text, Column
-
+from flask_sqlalchemy import SQLAlchemy
 
 # HuntLocation = db.Table('huntlocation', 
 #                     db.Column('id', db.Integer, primary_key=True),
 #                     db.Column('hunt_id', db.Integer, db.ForeignKey('hunts.id', ondelete='cascade')),
 #                     db.Column('location_id', db.Integer, db.ForeignKey('locations.id', ondelete='cascade')))
-
 
 class Hunt(db.Model):
     __tablename__ = 'hunts'

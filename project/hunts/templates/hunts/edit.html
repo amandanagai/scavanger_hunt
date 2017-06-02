@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-  <p>
-    {{hunt.username}}
-  </p>
+<!--   <h1>
+    Edit details
+  </h1> -->
+  <br>
+  <br>
   <form action="{{url_for('hunts.show', user_id=current_user.id, id=hunt.id)}}?_method=PATCH" method="POST">
       {{form.hunt_name.label}}
       {{form.hunt_name}}
-     <input type="submit" value="Update">
+     <input type="submit" class="btn btn-primary btn-sm" value="Update">
   </form>
-
   <br>
   <form action="{{url_for('hunts.show', user_id=current_user.id, id=hunt.id)}}?_method=DELETE" method="POST">
-    <input type="submit" value="Delete hunt">
+    <input type="submit" class="btn btn-warning btn-sm" value="Delete hunt">
   </form>
+  <a href="{{url_for('hunts.index', user_id=user_id)}}" class="btn btn-success btn-sm">Cancel</a>
 {% endblock %}

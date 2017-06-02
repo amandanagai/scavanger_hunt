@@ -1,5 +1,5 @@
 from project import db, bcrypt
-from flask_sqlalchemy import SQLAlchemy       # Enum, Integer, Text, Column
+from flask_sqlalchemy import SQLAlchemy
 
 
 class HuntLocation(db.Model):
@@ -10,11 +10,13 @@ class HuntLocation(db.Model):
     hunt_id = db.Column(db.Integer, db.ForeignKey('hunts.id', ondelete='cascade'))
     location_id = db.Column(db.Integer, db.ForeignKey('locations.id', ondelete='cascade'))
     location_order = db.Column(db.Integer, nullable=False)
+    hint = db.Column(db.Text, nullable=False)
 
-    def __init__(self, hunt_id, location_id, location_order):
+    def __init__(self, hunt_id, location_id, location_order, hint):
         self.hunt_id = hunt_id
         self.location_id = location_id
         self.location_order = location_order
+        self.hint = hint
 
     @classmethod
     def highest_order_num(cls, hunt_id):
@@ -22,17 +24,6 @@ class HuntLocation(db.Model):
         if highest is not None:
             return highest.location_order
         return 0
-
-    # @classmethod
-    # def max_lat(cls, hunt_id):
-    #     locations = cls.query.filter_by(hunt_id=hunt_id).location_id
-    #     for location in locations
-
-    #     if highest is not None:
-    #         return highest.location_order
-    #     return 0
-
-
 
     # @classmethod
     # def delete_and_reorder(cls, id):

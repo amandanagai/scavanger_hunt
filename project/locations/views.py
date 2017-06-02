@@ -23,15 +23,15 @@ def index(user_id, id):
             lat = request.form['lat']
             lng = request.form['lng']
             place = request.form['place']
+            hint = request.form['hint']
             new_place = Location(place, lat, lng)
             db.session.add(new_place)
             db.session.commit()
             highest = HuntLocation.highest_order_num(id)
-            hl = HuntLocation(id, new_place.id, highest+1)
+            hl = HuntLocation(id, new_place.id, highest+1, hint)
             db.session.add(hl)
             db.session.commit()
-            list_to_pass = [lat, lng, place, hl.location_order]
-            print(request.form['hint'])   # ADD TO DATABASE
+            list_to_pass = [lat, lng, place, hl.location_order, hint]
             return jsonify(list_to_pass)
         if request.method == 'GET':
             markers_dets = []

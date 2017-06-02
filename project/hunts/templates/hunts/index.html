@@ -2,16 +2,21 @@
 {% block content %}
   {% if hunts.count() > 0 %}
     <h1>These are your hunts: </h1>
+    <br>
     {% for hunt in hunts %}
-     <li>{{hunt.hunt_name}}</li> 
-      <a class="btn btn-info" href="{{url_for('hunts.show', user_id=user.id, id=hunt.id)}}">See details</a>
-      <a class="btn btn-success" href="{{url_for('hunts.edit', user_id=user.id, id=hunt.id)}}">Edit name</a>
+     <h4>{{hunt.hunt_name}}</h4> 
+      <a class="btn btn-primary btn-sm" href="{{url_for('hunts.show', user_id=user.id, id=hunt.id)}}">See details</a>
+      <a class="btn btn-success btn-sm" href="{{url_for('hunts.edit', user_id=user.id, id=hunt.id)}}">Edit name</a>
       <br>
       <br>
     {% endfor %}
-      <a class="btn btn-primary" href="{{url_for('hunts.new', user_id=user.id)}}">Click here to add a hunt</a>
   {% else %}
     <h1>You have no hunts yet</h1>
-    <a class="btn btn-primary" href="{{url_for('hunts.new', user_id=user.id)}}">Click here to add a hunt</a>
   {% endif %}
+    <br>
+    <a class="btn btn-warning btn-sm" href="{{url_for('hunts.new', user_id=user.id)}}">Click here to add a hunt</a>
+    <br>
+    <br>
+    <br>
+    <a class="btn btn-default btn-sm" href="{{url_for('users.logout')}}">Log out</a>
 {% endblock %}

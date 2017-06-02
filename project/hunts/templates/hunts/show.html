@@ -2,14 +2,24 @@
 {% block content %}
     <h1>{{hunt.hunt_name}}</h1>
     {% if hunt.locations|length %}
+    <br>
+    <h4>Locations:</h4>
       <ol>
       {% for location in hunt.locations %}
         <li>{{location.place_name}}</li>
+        {% for el in huntlocations %}
+          {% if location.id == el.location_id %}
+            hint: {{el.hint}}
+          {% endif %}
+        {% endfor %}
       {% endfor %}
       </ol>
-    <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">See the Hunt</a>
+    <br>
+    <a class="btn btn-warning btn-sm" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Continue Building Hunt</a>
     {% else %}
+      <br>
       <h4>You haven't added any locations yet</h4>
-      <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Build the Hunt</a>
+      <a class="btn btn-warning btn-sm" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Build the Hunt</a>
     {% endif %}
+    <a href="{{url_for('hunts.index', user_id=user_id)}}" class="btn btn-success btn-sm">Back to Hunts List</a>
 {% endblock %}
