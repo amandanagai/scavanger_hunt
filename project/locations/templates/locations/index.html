@@ -28,7 +28,10 @@
   <form id="hints_form" style="display: none;">
     <input type="hidden" id="user_id" value="{{current_user.id}}">
     <input type="hidden" id="hunt_id" value="{{id}}">
-    <labe>Write a hint to add location<input class="place" type="text"></labe>
+    <input type="hidden" id="lat">
+    <input type="hidden" id="lng">
+    <input type="hidden" id="search">
+    <label>Write a hint to add location<input class="hint" type="text"></label>
     <input class="submitAdd" type="submit" value="add to hunt">
     <input class="backBtn" type="submit" value="back to search">
   </form>
@@ -40,13 +43,16 @@
     src="https://maps.googleapis.com/maps/api/js?v=3.27&key=AIzaSyD3GR4qurOOFeNGD2U3ar8YhD8hQ3hIR8U&signed_in=true">
   </script>
 
+  <!-- <script src="../../../static/script.js"></script> -->
   <script>
-    $(function(){
+  $(function(){
       var $submitSearch = $('.submitSearch');
+      var $submitAdd = $('.submitAdd');
       var $userId = $('#user_id').val();
       var $huntId = $('#hunt_id').val();
       var markers = [];
       var map;
+      var pendingMarker;
 
       function initMap(lat, lng) {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -107,83 +113,113 @@
         e.preventDefault();
         var $place = $('.place').val();
       
-      $.ajax({
-          method: 'post',
-          url: `/users/${$userId}/hunts/${$huntId}/locations/geocode`,   
-          data: {
-              place: $place
-          },
-          headers: {
-              "X-Requested-With": "XMLHttpRequest"        
+        $.ajax({
+            method: 'post',
+            url: `/users/${$userId}/hunts/${$huntId}/locations/geocode`,   
+            data: {
+                place: $place
+            },
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"        
+            }
+          })
+        .then(function(res){
+          var newPlace = {lat: res[0], lng: res[1]};
+          var search = res[2];
+          createMarker(newPlace, map);
+          $('#hints_form').css({ "display": 'block'});
+          $('#search_form').css({ "display": 'none'});
+          $('#lat').val(newPlace['lat']); 
+          $('#lng').val(newPlace['lng']); 
+          $('#search').val(search); 
+
+          function createMarker(newPlace, map) {
+            var marker = new google.maps.Marker({
+              map: map,
+              position: newPlace,
+              // huntLocationId: 'pending'
+            });
+
+            var infoWindow = new google.maps.InfoWindow({
+              content: search
+              // content: `${search}: click to add location to hunt`
+            });
+
+            infoWindow.open(map, marker);
+            // marker.addListener('mouseover', function() {
+            //   infoWindow.open(map, marker);
+            // });
+              
+          //   marker.addListener('click', function(e){
+          //       $.ajax({
+          //         method: 'post',
+          //         url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+          //         data: {
+          //           lat: newPlace['lat'],
+          //           lng: newPlace['lng'],
+          //           place: search
+          //         }
+          //       })
+          //       .then(function(res){ 
+          //           var added = new google.maps.Marker({
+          //             map: map,
+          //             position: newPlace,
+          //             label: `#${res[3]}`
+          //           });
+          //       })
+          //   });
+          //   infoWindow.addListener('click', function(e){
+          //       $.ajax({
+          //         method: 'post',
+          //         url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+          //         data: {
+          //           lat: newPlace['lat'],
+          //           lng: newPlace['lng'],
+          //           place: search
+          //         }
+          //       })
+          //       .then(function(res){ 
+          //           var added = new google.maps.Marker({
+          //             map: map,
+          //             position: newPlace,
+          //             label: `#${res[3]}`
+          //           });
+          //       })
+          //   });        
           }
+
+        $submitAdd.on("click", function(e){
+          e.preventDefault();
+          var hint = $('.hint').val();
+          var lat = $('#lat').val();
+          var lng = $('#lng').val();
+          var search = $('#search').val();
+        
+          $.ajax({
+            method: 'post',
+            url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
+            data: {
+              lat: lat,
+              lng: lng,
+              place: search,
+              hint: hint
+            }
+          })
+          .then(function(res){ 
+            debugger;
+            var added = new google.maps.Marker({
+              map: map,
+              position: {lat: res[0], lng: res[1]},
+              label: `#${res[3]}`
+            });
+          })
+
+          });
         })
-      .then(function(res){
-        var newPlace = {lat: res[0], lng: res[1]};
-        var search = res[2];
-        createMarker(newPlace, map);
-        $('#hints_form').css({ "display": 'block'});
-        $('#search_form').css({ "display": 'none'});
-        $('#search_form').append() // ADD MARKER ID TO FORM!!!!
+      })
 
-
-        function createMarker(newPlace, map) {
-          var marker = new google.maps.Marker({
-            map: map,
-            position: newPlace,
-          });
-
-          var infoWindow = new google.maps.InfoWindow({
-            content: `${search}: click to add location to hunt`
-          });
-
-          infoWindow.open(map, marker);
-          // marker.addListener('mouseover', function() {
-          //   infoWindow.open(map, marker);
-          // });
-            
-          marker.addListener('click', function(e){
-              // e.preventDefault();
-              $.ajax({
-                method: 'post',
-                url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-                data: {
-                  lat: newPlace['lat'],
-                  lng: newPlace['lng'],
-                  place: search
-                }
-              })
-              .then(function(res){ 
-                  var added = new google.maps.Marker({
-                    map: map,
-                    position: newPlace,
-                    label: `#${res[3]}`
-                  });
-              })
-          });
-          infoWindow.addListener('click', function(e){
-              // e.preventDefault();
-              $.ajax({
-                method: 'post',
-                url: `/users/${$userId}/hunts/${$huntId}/locations/`,    
-                data: {
-                  lat: newPlace['lat'],
-                  lng: newPlace['lng'],
-                  place: search
-                }
-              })
-              .then(function(res){ 
-                  var added = new google.maps.Marker({
-                    map: map,
-                    position: newPlace,
-                    label: `#${res[3]}`
-                  });
-              })
-          });        
-        }
-
-        });
-        })
-    })
+  })
   </script>
 
 {% endblock %}
+

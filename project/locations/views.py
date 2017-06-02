@@ -19,7 +19,6 @@ locations_blueprint = Blueprint(
 @locations_blueprint.route('/', methods=['GET', 'POST'])
 def index(user_id, id):
     if "X-Requested-With" in request.headers:
-        # from IPython import embed; embed()
         if request.method == 'POST':
             lat = request.form['lat']
             lng = request.form['lng']
@@ -32,6 +31,7 @@ def index(user_id, id):
             db.session.add(hl)
             db.session.commit()
             list_to_pass = [lat, lng, place, hl.location_order]
+            print(request.form['hint'])   # ADD TO DATABASE
             return jsonify(list_to_pass)
         if request.method == 'GET':
             markers_dets = []
