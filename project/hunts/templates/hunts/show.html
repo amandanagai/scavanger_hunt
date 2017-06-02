@@ -5,14 +5,11 @@
       <ol>
       {% for location in hunt.locations %}
         <li>{{location.place_name}}</li>
-        <span>
-        <a href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Delete</a>
-        </span>
       {% endfor %}
       </ol>
-    <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Add a location</a>
+    <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">See the Hunt</a>
     {% else %}
       <h4>You haven't added any locations yet</h4>
-      <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Add a location</a>
+      <a class="btn btn-warning" href="{{url_for('locations.index', user_id=current_user.id, id=hunt.id)}}">Build the Hunt</a>
     {% endif %}
 {% endblock %}

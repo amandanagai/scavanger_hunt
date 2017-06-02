@@ -23,6 +23,21 @@ class HuntLocation(db.Model):
             return highest.location_order
         return 0
 
+    # @classmethod
+    # def max_lat(cls, hunt_id):
+    #     locations = cls.query.filter_by(hunt_id=hunt_id).location_id
+    #     for location in locations
+
+    #     if highest is not None:
+    #         return highest.location_order
+    #     return 0
+
+
+
+    # @classmethod
+    # def delete_and_reorder(cls, id):
+    #     to_delete = cls.query.filter_by()
+
 class Location(db.Model):
     
     __tablename__ = 'locations'
@@ -32,6 +47,7 @@ class Location(db.Model):
     lat = db.Column(db.Float, nullable=False)
     lng = db.Column(db.Float, nullable=False)
     hunts = db.relationship('Hunt', secondary='huntlocation', backref='locations', lazy='dynamic', cascade='all,delete')
+
 
     def __init__(self, place_name, lat, lng):
         self.place_name = place_name
