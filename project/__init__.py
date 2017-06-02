@@ -45,5 +45,5 @@ def load_user(user_id):
 def root():
     return redirect(url_for('users.login'))
 
-    # https://scavanger-hunt.herokuapp.com/users/login
-    # h3lpH#LP
+
+ 
