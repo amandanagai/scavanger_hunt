@@ -1,4 +1,4 @@
-Note: This is a WIP
+*Note: This is a WIP. Not finished; was a way to explore the Google Maps API.
 
 Scavanger Hunt
 
