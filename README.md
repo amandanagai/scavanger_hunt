@@ -1,3 +1,5 @@
+Note: This is a WIP
+
 Scavanger Hunt
 
 https://scavanger-hunt.herokuapp.com/users/login
